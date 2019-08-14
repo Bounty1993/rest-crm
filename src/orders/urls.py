@@ -1,10 +1,9 @@
 from django.urls import path, include
 
-from .views import OrderListAPIView, OrderCreateAPIView, OrderRetrieveAPIView
+from .views import OrderListCreateAPIView, OrderRetrieveAPIView
 
 app_name = 'orders'
 urlpatterns = [
-    path('', OrderListAPIView.as_view(), name='list'),
-    path('create/', OrderCreateAPIView.as_view(), name='create'),
+    path('', OrderListCreateAPIView.as_view(), name='list'),
     path('<pk>/', OrderRetrieveAPIView.as_view(), name='retrive'),
 ]

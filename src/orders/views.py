@@ -1,17 +1,21 @@
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework import filters
 
 from .models import Order
 from .serializers import OrderSerializer, OrderRetrieveSerializer
+from .paginations import StandardLimitPagination
 
 
-class OrderListAPIView(ListAPIView):
+class OrderListCreateAPIView(ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-
-
-class OrderCreateAPIView(CreateAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['product', 'amount']
+    pagination_class = StandardLimitPagination
 
 
 class OrderRetrieveAPIView(RetrieveAPIView):
