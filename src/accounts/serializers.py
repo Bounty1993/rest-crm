@@ -38,18 +38,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             email=email,
         )
         user.set_password(password)
+        user.save()
         return validated_data
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=50, read_only=True)
+    username = serializers.CharField()
+
     class Meta:
         model = User
         fields = [
             'username',
             'password',
+            'token',
         ]
 
     def validate(self, data):
+
         username = data['username']
         password = data['password']
         users = User.objects.filter(username=username)
@@ -62,8 +68,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
         if not user_obj.check_password(password):
             raise serializers.ValidationError(msg)
 
-        TOKEN = 'SOME_TOKEN'
-        return TOKEN
+        data['token'] = 'SOME_TOKEN'
+        return data
 
 
 class UserListSerializer(serializers.ModelSerializer):
