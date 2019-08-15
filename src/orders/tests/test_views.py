@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from ..serializers import OrderSerializer, OrderCreateSerializer
+from ..serializers import OrderSerializer
 from ..models import Order
 from src.clients.models import Client
 

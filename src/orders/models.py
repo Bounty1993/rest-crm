@@ -22,3 +22,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.product}'
+
+    @property
+    def total_value(self):
+        return self.price * self.amount

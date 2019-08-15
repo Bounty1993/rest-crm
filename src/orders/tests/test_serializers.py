@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from ..serializers import OrderSerializer, OrderCreateSerializer
+from ..serializers import OrderSerializer
 from ..models import Order
 from src.clients.models import Client
 
@@ -24,5 +24,5 @@ class OrderSerializerTest(TestCase):
             'price': 150.05,
             'delivery': '2019-09-10'
         }
-        s = OrderCreateSerializer(data=data)
+        s = OrderSerializer(data=data)
         self.assertTrue(s.is_valid())
