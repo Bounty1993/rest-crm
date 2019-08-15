@@ -17,10 +17,10 @@ class OrderListCreateAPIView(ListCreateAPIView):
     search_fields = ['product', 'amount']
     pagination_class = StandardLimitPagination
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class OrderRetrieveAPIView(RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderRetrieveSerializer
-
-
-
