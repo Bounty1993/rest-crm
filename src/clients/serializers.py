@@ -5,7 +5,7 @@ from rest_framework.serializers import (
     HyperlinkedIdentityField
 )
 
-from .models import Client
+from .models import Client, Contact
 
 
 class ClientSerializer(ModelSerializer):
@@ -19,6 +19,7 @@ class ClientSerializer(ModelSerializer):
         fields = [
             'user', 'name', 'surname', 'street',
             'city', 'country', 'phone', 'birthday',
+            'slug',
         ]
 
     def validate_birthday(self, value):
@@ -26,5 +27,26 @@ class ClientSerializer(ModelSerializer):
         adult_date = today - timezone.timedelta(years=18)
         if adult_date < value:
             msg = 'Klient nie jest pełnoletni'
+            raise ValidationError(msg)
+        return value
+
+
+class ContactSerializer(ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = [
+            'client', 'user', 'kind',
+            'subject', 'description',
+            'creation_date', 'date',
+        ]
+        extra_kwargs = {
+            'client': {'read_only': True},
+            'user': {'read_only': True},
+        }
+
+    def validate_date(self, value):
+        today = timezone.now().date()
+        if value < today:
+            msg = 'Date nie może być w przeszłości'
             raise ValidationError(msg)
         return value
