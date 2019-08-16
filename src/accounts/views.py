@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import (
+    CreateAPIView, ListAPIView, RetrieveUpdateAPIView
+)
 from rest_framework.permissions import AllowAny
 
 from .serializers import (
@@ -34,5 +35,10 @@ class UserLoginAPIView(APIView):
 
 
 class UserListAPIView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserListSerializer
+
+
+class UserDetailAPIView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer

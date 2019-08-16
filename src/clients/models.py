@@ -1,15 +1,23 @@
 from django.db import models
+from django.conf import settings
 from django.utils.text import slugify
 
 
 class Client(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name='Użytkownik',
+        on_delete=models.DO_NOTHING,
+    )
     name = models.CharField('Imię', max_length=100)
     surname = models.CharField('Nazwisko', max_length=100)
     slug = models.SlugField(max_length=250, unique=True)
     street = models.CharField('Adres', max_length=1000, blank=True)
     city = models.CharField('Miasto', max_length=250, blank=True)
     country = models.CharField('Kraj', max_length=250, blank=True)
-    phone = models.PositiveIntegerField('Numer tel.', null=True, blank=True)
+    phone = models.PositiveIntegerField(
+        'Numer tel.', null=True, blank=True
+    )
+    birthday = models.DateField()
 
     def __str__(self):
         return self.slug

@@ -55,7 +55,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-
         username = data['username']
         password = data['password']
         users = User.objects.filter(username=username)
@@ -82,3 +81,6 @@ class UserListSerializer(serializers.ModelSerializer):
             'username',
             'email',
         ]
+        extra_kwargs = {
+            'username': {'read_only': True}
+        }
