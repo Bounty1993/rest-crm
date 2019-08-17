@@ -13,7 +13,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import (
     UserListSerializer, UserRegistrationSerializer,
     UserLoginSerializer, DepartamentSerializer)
-from .permissions import IsServiceStaffOrReadOnly, IsOwnerOrReadOnly
+from .permissions import (
+    IsServiceStaffOrReadOnly, IsOwnerOrReadOnly, HasDepartament
+)
 from .models import Departament
 
 User = get_user_model()
@@ -58,4 +60,4 @@ class UserViewSet(ModelViewSet):
 class DepartamentViewSet(ModelViewSet):
     queryset = Departament.objects.all()
     serializer_class = DepartamentSerializer
-    permission_classes = [IsAuthenticated, IsServiceStaffOrReadOnly]
+    permission_classes = [IsAuthenticated, HasDepartament, IsServiceStaffOrReadOnly]

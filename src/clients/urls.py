@@ -7,7 +7,7 @@ from .views import ClientViewSet, ContactViewSet
 app_name = 'clients'
 
 router = routers.DefaultRouter()
-router.register(r'client', ClientViewSet)
+router.register(r'manage', ClientViewSet)
 router.register(r'contact', ContactViewSet)
 
 urlpatterns = router.urls

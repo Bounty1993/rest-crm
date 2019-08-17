@@ -1,17 +1,19 @@
 from django.utils import timezone
 from rest_framework.serializers import (
     ModelSerializer,
+    HyperlinkedModelSerializer,
     ValidationError,
-    HyperlinkedIdentityField
+    HyperlinkedIdentityField,
+    HyperlinkedRelatedField
 )
 
 from .models import Client, Contact
 
 
-class ClientSerializer(ModelSerializer):
-    user = HyperlinkedIdentityField(
-        view_name='accounts:detail',
-        lookup_field='pk'
+class ClientSerializer(HyperlinkedModelSerializer):
+    user = HyperlinkedRelatedField(
+        read_only=True,
+        view_name='accounts:user-detail',
     )
 
     class Meta:
@@ -19,12 +21,11 @@ class ClientSerializer(ModelSerializer):
         fields = [
             'user', 'name', 'surname', 'street',
             'city', 'country', 'phone', 'birthday',
-            'slug',
         ]
 
     def validate_birthday(self, value):
         today = timezone.now().date()
-        adult_date = today - timezone.timedelta(years=18)
+        adult_date = today - timezone.timedelta(days=18 * 365)
         if adult_date < value:
             msg = 'Klient nie jest pełnoletni'
             raise ValidationError(msg)

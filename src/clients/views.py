@@ -11,7 +11,7 @@ class ClientViewSet(ModelViewSet):
     serializer_class = ClientSerializer
 
     def perform_create(self, serializer):
-        serializer.save(self.request.user)
+        serializer.save(user=self.request.user)
 
 
 class ContactViewSet(ModelViewSet):
