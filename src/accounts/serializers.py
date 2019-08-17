@@ -1,10 +1,17 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.serializers import (
+    ModelSerializer, ValidationError,
+    HyperlinkedModelSerializer
+)
+from rest_framework.validators import UniqueValidator
+
+from .models import Departament
 
 User = get_user_model()
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(ModelSerializer):
     password2 = serializers.CharField(label='Powtórz hasło', max_length=50)
 
     class Meta:
@@ -26,7 +33,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         password2 = value
         if password != password:
             msg = 'Hasła nie różnią!'
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return value
 
     def create(self, validated_data):
@@ -65,22 +72,39 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(msg)
 
         if not user_obj.check_password(password):
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
 
         data['token'] = 'SOME_TOKEN'
         return data
 
 
-class UserListSerializer(serializers.ModelSerializer):
+class UserListSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'username',
+            'id', 'first_name',
+            'last_name', 'username',
             'email',
         ]
         extra_kwargs = {
             'username': {'read_only': True}
+        }
+
+
+class DepartamentSerializer(ModelSerializer):
+    workers = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = Departament
+        fields = [
+            'name', 'workers'
+        ]
+        extra_kwargs = {
+            'name': {
+                'validators': [
+                    UniqueValidator(queryset=Departament.objects.all())
+                ]
+            }
         }
