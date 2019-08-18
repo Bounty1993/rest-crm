@@ -1,6 +1,7 @@
 from django.utils import timezone
 from rest_framework.serializers import (
     ModelSerializer,
+    SerializerMethodField,
     HyperlinkedModelSerializer,
     ValidationError,
     HyperlinkedIdentityField,
@@ -8,28 +9,6 @@ from rest_framework.serializers import (
 )
 
 from .models import Client, Contact
-
-
-class ClientSerializer(HyperlinkedModelSerializer):
-    user = HyperlinkedRelatedField(
-        read_only=True,
-        view_name='accounts:user-detail',
-    )
-
-    class Meta:
-        model = Client
-        fields = [
-            'user', 'name', 'surname', 'street',
-            'city', 'country', 'phone', 'birthday',
-        ]
-
-    def validate_birthday(self, value):
-        today = timezone.now().date()
-        adult_date = today - timezone.timedelta(days=18 * 365)
-        if adult_date < value:
-            msg = 'Klient nie jest pełnoletni'
-            raise ValidationError(msg)
-        return value
 
 
 class ContactSerializer(ModelSerializer):
@@ -49,5 +28,41 @@ class ContactSerializer(ModelSerializer):
         today = timezone.now().date()
         if value < today:
             msg = 'Date nie może być w przeszłości'
+            raise ValidationError(msg)
+        return value
+
+
+class ClientSerializer(HyperlinkedModelSerializer):
+    url = HyperlinkedIdentityField(
+        view_name='clients:client-detail',
+        lookup_field='slug',
+    )
+    user = HyperlinkedRelatedField(
+        read_only=True,
+        view_name='accounts:user-detail',
+    )
+    profits = SerializerMethodField()
+    contact = ContactSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Client
+        fields = [
+            'url', 'user', 'name',
+            'surname', 'street', 'city',
+            'country', 'phone', 'birthday',
+            'email', 'profits', 'contact',
+        ]
+
+    def get_profits(self, obj):
+        profits = 0
+        for order in obj.orders.all():
+            profits += order.total_value
+        return profits
+
+    def validate_birthday(self, value):
+        today = timezone.now().date()
+        adult_date = today - timezone.timedelta(days=18 * 365)
+        if adult_date < value:
+            msg = 'Klient nie jest pełnoletni'
             raise ValidationError(msg)
         return value

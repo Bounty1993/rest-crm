@@ -3,38 +3,42 @@ from rest_framework import serializers
 from rest_framework.serializers import (
     ValidationError,
     HyperlinkedIdentityField,
+    HyperlinkedRelatedField,
     SlugRelatedField,
     SerializerMethodField
 )
 from .models import Order
+from src.clients.models import Client
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.HyperlinkedModelSerializer):
     url = HyperlinkedIdentityField(
-        view_name='orders:detail',
+        view_name='orders:order-detail',
     )
-    user = SerializerMethodField()
-    client = SerializerMethodField()
+    user = HyperlinkedRelatedField(
+        view_name='accounts:user-detail',
+        read_only=True
+    )
+    client = HyperlinkedRelatedField(
+        view_name='clients:client-detail',
+        queryset=Client.objects.all(),
+        lookup_field='slug'
+    )
+    client_name = SerializerMethodField()
     total_value = SerializerMethodField()
 
     class Meta:
         model = Order
         fields = [
-            'url',
-            'id',
-            'user',
-            'client',
-            'product',
-            'amount',
-            'price',
-            'delivery',
-            'total_value',
+            'url', 'user', 'client',
+            'client_name', 'product', 'amount',
+            'price', 'delivery', 'total_value',
         ]
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
 
-    def get_user(self, obj):
-        return str(obj.user.username)
-
-    def get_client(self, obj):
+    def get_client_name(self, obj):
         name = obj.client.name
         surname = obj.client.surname
         full_name = f'{name} {surname}'
@@ -49,20 +53,3 @@ class OrderSerializer(serializers.ModelSerializer):
             msg = 'Data dostawy nie może być w przeszłości'
             raise ValidationError(msg)
         return value
-
-
-class OrderRetrieveSerializer(serializers.ModelSerializer):
-    user = SerializerMethodField()
-
-    class Meta:
-        model = Order
-        fields = [
-            'user',
-            'client',
-            'product',
-            'amount',
-            'price',
-        ]
-
-    def get_user(self, obj):
-        return str(obj.user.username)

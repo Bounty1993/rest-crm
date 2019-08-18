@@ -17,6 +17,7 @@ class Client(models.Model):
     phone = models.PositiveIntegerField(
         'Numer tel.', null=True, blank=True
     )
+    email = models.EmailField(blank=True)
     birthday = models.DateField()
 
     def __str__(self):
@@ -57,3 +58,6 @@ class Contact(models.Model):
     description = models.CharField('Opis', max_length=1000)
     creation_date = models.DateField('Data', auto_now_add=True)
     date = models.DateField('Zaplanowana data', blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.creation_date - self.client}'
