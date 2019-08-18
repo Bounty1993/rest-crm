@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.serializers import (
-    ModelSerializer, ValidationError,
-    HyperlinkedModelSerializer
+    ModelSerializer, Serializer,
+    ValidationError, HyperlinkedModelSerializer,
 )
 from rest_framework.validators import UniqueValidator
 
@@ -89,6 +90,15 @@ class UserListSerializer(ModelSerializer):
         extra_kwargs = {
             'username': {'read_only': True}
         }
+
+
+class ChangePasswordSerializer(Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
 
 
 class DepartamentSerializer(ModelSerializer):

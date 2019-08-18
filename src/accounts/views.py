@@ -1,18 +1,21 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import (
-    CreateAPIView, ListAPIView, RetrieveUpdateAPIView
+    CreateAPIView, ListAPIView, RetrieveUpdateAPIView, UpdateAPIView
 )
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import (
     UserListSerializer, UserRegistrationSerializer,
-    UserLoginSerializer, DepartamentSerializer)
+    UserLoginSerializer, DepartamentSerializer,
+    ChangePasswordSerializer)
 from .permissions import (
     IsServiceStaffOrReadOnly, IsOwnerOrReadOnly, HasDepartament
 )
@@ -48,6 +51,29 @@ class UserLogoutAPIView(APIView):
             logout(request)
             return redirect('/')
         return Response('Bad request')
+
+
+class PasswordChangeAPIView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = ChangePasswordSerializer
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.data.get("old_password")
+            if not user.check_password(old_password):
+                return Response({"old_password": ["Wrong password."]},
+                                status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.data.get("new_password"))
+            user.save()
+            update_session_auth_hash(request, user)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(ModelViewSet):

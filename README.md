@@ -17,6 +17,8 @@ cd restcrm
 git clone ...
 cd restcrm
 pip install requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 Check it out
 ```
