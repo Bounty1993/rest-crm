@@ -103,7 +103,7 @@ class ChangePasswordSerializer(Serializer):
 
 class DepartamentSerializer(ModelSerializer):
     workers = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=User.objects.all()
+        many=True, queryset=User.objects.all(), required=False
     )
 
     class Meta:

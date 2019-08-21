@@ -20,7 +20,4 @@ class ContactViewSet(ModelViewSet):
     serializer_class = ContactSerializer
 
     def perform_create(self, serializer):
-        user = self.request.user
-        client_pk = self.kwargs['pk']
-        client = Client.objects.get(pk=client_pk)
-        serializer.save(user=user, client=client)
+        serializer.save(user=self.request.user)

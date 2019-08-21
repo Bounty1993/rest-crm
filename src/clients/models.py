@@ -18,7 +18,7 @@ class Client(models.Model):
         'Numer tel.', null=True, blank=True
     )
     email = models.EmailField(blank=True)
-    birthday = models.DateField()
+    birthday = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.slug

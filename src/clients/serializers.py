@@ -5,13 +5,20 @@ from rest_framework.serializers import (
     HyperlinkedModelSerializer,
     ValidationError,
     HyperlinkedIdentityField,
-    HyperlinkedRelatedField
+    HyperlinkedRelatedField,
+    PrimaryKeyRelatedField
 )
 
 from .models import Client, Contact
 
 
 class ContactSerializer(ModelSerializer):
+    client = HyperlinkedRelatedField(
+        view_name='clients:client-detail',
+        lookup_field='slug',
+        queryset=Client.objects.all()
+    )
+
     class Meta:
         model = Contact
         fields = [
@@ -42,7 +49,6 @@ class ClientSerializer(HyperlinkedModelSerializer):
         view_name='accounts:user-detail',
     )
     profits = SerializerMethodField()
-    contact = ContactSerializer(many=True, read_only=True)
 
     class Meta:
         model = Client
@@ -50,7 +56,7 @@ class ClientSerializer(HyperlinkedModelSerializer):
             'url', 'user', 'name',
             'surname', 'street', 'city',
             'country', 'phone', 'birthday',
-            'email', 'profits', 'contact',
+            'email', 'profits',
         ]
 
     def get_profits(self, obj):

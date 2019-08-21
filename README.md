@@ -14,9 +14,9 @@ Create a folder, clone from Github, install dependencies and run a server
 ```
 mkdir restcrm
 cd restcrm
-git clone ...
-cd restcrm
-pip install requirements.txt
+git clone https://github.com/Bounty1993/rest-crm.git
+cd rest-crm
+pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
@@ -24,3 +24,4 @@ Check it out
 ```
 http://localhost:8000/accounts
 ```
+### Project is under development

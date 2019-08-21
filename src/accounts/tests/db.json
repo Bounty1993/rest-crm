@@ -1,0 +1,56 @@
+[
+{
+  "model": "accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$150000$C53KSP6lUicr$fDv4zLItObl/5F5X1oh+rWjHV4nD7UCUeSAUBCXGp8I=",
+    "last_login": "2019-08-18T17:02:29.552Z",
+    "is_superuser": true,
+    "username": "bartosz",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2019-08-17T15:36:46Z",
+    "departament": 3,
+    "chef": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$150000$Tw0l8Vr6vgVD$rCBrjwW66VXN1mN3mQ6c7RPHilYRGznQxxIlSUvKaig=",
+    "last_login": "2019-08-17T17:14:21.159Z",
+    "is_superuser": false,
+    "username": "Bartosz1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2019-08-17T16:40:13.340Z",
+    "departament": 2,
+    "chef": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.departament",
+  "pk": 2,
+  "fields": {
+    "name": "S"
+  }
+},
+{
+  "model": "accounts.departament",
+  "pk": 3,
+  "fields": {
+    "name": "IT"
+  }
+}
+]
